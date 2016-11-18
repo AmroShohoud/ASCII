@@ -58,6 +58,7 @@ object ASCII {
   var availableCharacters = Array('@', '|', '+', '-', '0')
   var character = '@' // @, |, +, -, 0
   var isDrawing = false
+  var return_early = false
 
 
   def WIDTH(w: Int) = {
@@ -80,7 +81,7 @@ object ASCII {
 
   }
 
-  def render() = {
+  def RENDER() = {
     for (column <- grid) {
       for (element <- column) {
         print(element)
@@ -89,15 +90,15 @@ object ASCII {
     }
   }
 
-  def set() = {
+  def SET() = {
     isDrawing = true
   }
 
-  def unset() = {
+  def UNSET() = {
     isDrawing = false
   }
 
-  def marker(c: Char) = {
+  def MARKER(c: Char) = {
     if (availableCharacters contains c) {
       character = c
     } else {
@@ -123,15 +124,32 @@ object ASCII {
     return false
   }
 
-  def test(): Boolean = {
-    true
+  def THEN(dir: Direction) = {
+    MOVE(dir)
+    if (return_early == true) {
+      println("yo")
+      SWALLOW
+    } else {
+      println("yo test")
+      this
+    }
+    // this
+  }
+
+  object SWALLOW {
+    def THEN() {
+      // this
+    }
+    def THEN(dir: Direction) {
+      // this
+    }
   }
 
   // def move(dir: Direction) = (mag: Int = 1) => {
   //   prefix + " " + s
   // }
 
-  def move(dir: Direction) = {
+  def MOVE(dir: Direction) = {
     val old_cursor = cursor
     dir match {
       case UP => {
@@ -147,15 +165,19 @@ object ASCII {
         cursor = (cursor._1, cursor._2 + 1)
       }
     }
+
     if (cursor._1 < 0 || cursor._2 < 0 || cursor._1 >= height || cursor._2 >= width) {
       println("Moved out of bounds.")
       cursor = old_cursor
+      return_early = true
+    } else {
+      if (isDrawing) {
+        grid(old_cursor._1)(old_cursor._2) = character
+      }
+      return_early = false
     }
-    if (isDrawing) {
-      println(old_cursor)
-      grid(old_cursor._1)(old_cursor._2) = character
-    }
-    // println(cursor)
+    println(cursor)
+    this
   }
 
 }
