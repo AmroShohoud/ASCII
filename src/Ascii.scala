@@ -32,7 +32,20 @@ object RIGHT extends Direction
 object UP extends Direction
 object DOWN extends Direction
 
-object ASCII {
+class TEST {
+  def THEN(): TEST = {
+    this
+  }
+  def THEN(dir: Direction): TEST = {
+    this
+  }
+}
+
+object SWALLOW extends TEST {
+
+}
+
+object ASCII extends TEST {
 
   // def move(dir: Direction) = {
   //   println(dir)
@@ -124,26 +137,18 @@ object ASCII {
     return false
   }
 
-  def THEN(dir: Direction) = {
-    MOVE(dir)
-    if (return_early == true) {
-      println("yo")
-      SWALLOW
+
+
+  override def THEN(dir: Direction): TEST = {
+    if (return_early) {
+      return SWALLOW
     } else {
-      println("yo test")
-      this
+      MOVE(dir)
+      return this
     }
     // this
   }
 
-  object SWALLOW {
-    def THEN() {
-      // this
-    }
-    def THEN(dir: Direction) {
-      // this
-    }
-  }
 
   // def move(dir: Direction) = (mag: Int = 1) => {
   //   prefix + " " + s
@@ -175,8 +180,8 @@ object ASCII {
         grid(old_cursor._1)(old_cursor._2) = character
       }
       return_early = false
+      println(cursor)
     }
-    println(cursor)
     this
   }
 
