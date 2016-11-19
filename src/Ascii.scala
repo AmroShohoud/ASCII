@@ -12,7 +12,7 @@ object DOWN extends Direction
 abstract sealed class DoType{}
 object WHILE extends DoType
 object IF extends DoType
-abstract sealed class AbstractCondExecute {}
+// abstract sealed class AbstractCondExecute {}
 
 class TEST {
   def THEN(): TEST = {
@@ -21,15 +21,18 @@ class TEST {
   def THEN(dir: Direction): TEST = {
     this
   }
-  def DO(dType: DoType): AbstractCondExecute = {
+
+  def DO(dType: DoType) = {
     this
+  }
+
+  def EXISTS(dir: Direction) = {
   }
 }
 
 object SWALLOW extends TEST {}
 
 object ASCII extends TEST { ascii_obj =>
-
 
   var width = 25
   var height = 15
@@ -54,7 +57,6 @@ object ASCII extends TEST { ascii_obj =>
       width = w
       grid = Array.fill[Char](height, width) { '0' }
     }
-
   }
 
   def HEIGHT(h: Int) = {
@@ -92,27 +94,10 @@ object ASCII extends TEST { ascii_obj =>
     }
   }
 
-  // def EXISTS(dir: Direction): Boolean = {
-  //   dir match {
-  //     case UP => {
-  //       return cursor._1 > 0
-  //     }
-  //     case DOWN => {
-  //       return cursor._1 < height - 1
-  //     }
-  //     case LEFT  =>{
-  //       return cursor._2 > 0
-  //     }
-  //     case RIGHT => {
-  //       return cursor._2 < width - 1
-  //     }
-  //   }
-  //   return false
-  // }
 
-  class CondExecute(delta: (Int, Int), dType: DoType) extends AbstractCondExecute{
+  class CondExecute(delta: (Int, Int), dType: DoType) extends TEST {
     // all functions must be types of conditionals
-    def EXISTS(dir: Direction) = {
+    override def EXISTS(dir: Direction) = {
       var old_move_path = move_path
       def does_exist(): Boolean = {
         println(cursor._1)
@@ -152,7 +137,7 @@ object ASCII extends TEST { ascii_obj =>
     }
   }
 
-  override def DO(dType: DoType): AbstractCondExecute = {
+  override def DO(dType: DoType) = {
     // reset cursor for conditional
     cursor = (cursor._1 - move_delta._1, cursor._2 - move_delta._2)
     val old_move_delta = move_delta
