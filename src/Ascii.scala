@@ -12,13 +12,10 @@ object DOWN extends Direction
 abstract sealed class DoType{}
 object WHILE extends DoType
 object IF extends DoType
-// abstract sealed class AbstractCondExecute {}
 
-class TEST {
-  def THEN(): TEST = {
-    this
-  }
-  def THEN(dir: Direction): TEST = {
+class OBJ {
+
+  def THEN(dir: Direction): OBJ = {
     this
   }
 
@@ -26,13 +23,12 @@ class TEST {
     this
   }
 
-  def EXISTS(dir: Direction) = {
-  }
+  def EXISTS(dir: Direction) = {}
 }
 
-object SWALLOW extends TEST {}
+object SWALLOW extends OBJ {}
 
-object ASCII extends TEST { ascii_obj =>
+object ASCII extends OBJ { ascii_obj =>
 
   var width = 25
   var height = 15
@@ -45,7 +41,7 @@ object ASCII extends TEST { ascii_obj =>
   var isDrawing = true
   var return_early = false
 
-  var move_path:Array[Direction] = new Array[Direction](0)
+  var move_path: Array[Direction] = new Array[Direction](0)
 
   var move_delta = (0, 0)
 
@@ -95,7 +91,7 @@ object ASCII extends TEST { ascii_obj =>
   }
 
 
-  class CondExecute(delta: (Int, Int), dType: DoType) extends TEST {
+  class CondExecute(delta: (Int, Int), dType: DoType) extends OBJ {
     // all functions must be types of conditionals
     override def EXISTS(dir: Direction) = {
       var old_move_path = move_path
@@ -148,14 +144,13 @@ object ASCII extends TEST { ascii_obj =>
 
 
 
-  override def THEN(dir: Direction): TEST = {
+  override def THEN(dir: Direction): OBJ = {
     if (return_early) {
       return SWALLOW
     } else {
       MOVE(dir)
       return this
     }
-    // this
   }
 
   def MOVE(dir: Direction) = {
