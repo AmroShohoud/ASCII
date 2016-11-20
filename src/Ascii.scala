@@ -91,7 +91,7 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
 
-  class CondExecute(delta: (Int, Int), dType: DoType) extends OBJ {
+  class CondExecute(dType: DoType) extends OBJ {
     // all functions must be types of conditionals
     override def EXISTS(dir: Direction) = {
       var old_move_path = move_path
@@ -136,10 +136,27 @@ object ASCII extends OBJ { ascii_obj =>
   override def DO(dType: DoType) = {
     // reset cursor for conditional
     cursor = (cursor._1 - move_delta._1, cursor._2 - move_delta._2)
-    val old_move_delta = move_delta
     move_delta = (0,0)
-    new CondExecute(old_move_delta, dType)
+    new CondExecute(dType)
   }
+
+  // override def DO(times: Int) = {
+  //   // reset cursor for conditional
+  //   cursor = (cursor._1 - move_delta._1, cursor._2 - move_delta._2)
+  //   move_delta = (0,0)
+  //   var old_move_path = move_path
+  //   for( i <- 0 to times) {
+  //     for(step <- old_move_path){
+  //         ascii_obj MOVE step
+  //       }
+  //   }
+  //   move_path = Array()
+  //   new Times
+  // }
+
+  // class Times {
+  //   def TIMES() = {}
+  // }
 
   override def THEN(dir: Direction): OBJ = {
     if (return_early) {
