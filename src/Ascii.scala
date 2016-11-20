@@ -1,5 +1,6 @@
 // for disabling compiler warnings about postfixes
 import scala.language.postfixOps
+import scala.collection.mutable.Set
 
 import scala.io.Source
 
@@ -107,6 +108,56 @@ object ASCII extends OBJ { ascii_obj =>
     this
   }
 
+  def JUMP(new_pos: (Int, Int)) = {
+    if (!in_bounds(new_pos)) {
+      println("Jumped out of bounds.")
+      return_early = true
+    } else {
+      cursor = new_pos
+    }
+    this
+  }
+
+  def RECT(size: (Int, Int)) = {
+    val (width, height) = size
+    for (x <- 1 to width) {
+      ascii_obj COND_MOVE RIGHT
+    }
+    for (y <- 1 to height) {
+      ascii_obj COND_MOVE DOWN
+    }
+    for (x <- 1 to width) {
+      ascii_obj COND_MOVE LEFT
+    }
+    for (y <- 1 to height) {
+      ascii_obj COND_MOVE UP
+    }
+  }
+
+  def FILL(replace_with: Char) = {
+    var visited = Set[(Int, Int)]()
+    val (starty, startx) = cursor
+    var replace_char = grid(starty)(startx)
+    def fill_recurse(y: Int, x: Int): Unit = {
+      if (!in_bounds((y, x)) || visited.contains((y, x))) {
+        return
+      }
+
+      visited += ((y, x))
+      if (grid(y)(x) != replace_char) {
+        return
+      }
+      grid(y)(x) = replace_with
+
+      for (delta <- List((1, 0), (0, 1), (-1, 0), (0, -1))) {
+        val (yd, xd) = delta
+        fill_recurse(y + yd, x + xd)
+      }
+    }
+    fill_recurse(starty, startx)
+  }
+
+
 
   // conditionals, loops, complicated shit
   class CondExecute(delta: (Int, Int), dType: DoType) extends OBJ {
@@ -157,9 +208,27 @@ object ASCII extends OBJ { ascii_obj =>
   override def DO(dType: DoType) = {
     val old_delta = move_delta
     move_delta = (0,0)
+    for (column <- last_grid) {
+      for (element <- column) {
+        print(element)
+      }
+      print("\n")
+    }
+    print("\n")
+    print("\n")
+    print("\n")
+
     grid = last_grid
     cursor = last_cursor
     character = last_character
+
+
+    for (column <- grid) {
+      for (element <- column) {
+        print(element)
+      }
+      print("\n")
+    }
     new CondExecute(old_delta, dType)
   }
 
@@ -189,6 +258,8 @@ object ASCII extends OBJ { ascii_obj =>
     }
   }
 
+
+
   def COND_MOVE(dir: Direction) = {
     val old_cursor = cursor
     move_path = move_path :+ dir
@@ -211,7 +282,7 @@ object ASCII extends OBJ { ascii_obj =>
       }
     }
 
-    if (cursor._1 < 0 || cursor._2 < 0 || cursor._1 >= height || cursor._2 >= width) {
+    if (!in_bounds(cursor)) {
       println("Moved out of bounds.")
       cursor = old_cursor
       return_early = true
@@ -223,6 +294,11 @@ object ASCII extends OBJ { ascii_obj =>
       println(cursor)
     }
     this
+  }
+
+  def in_bounds(cursor: (Int, Int)): Boolean = {
+    val (y, x) = cursor
+    return (y >= 0 && x >= 0 && y < height && x < width)
   }
 
 }
