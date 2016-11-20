@@ -139,10 +139,7 @@ object ASCII extends OBJ { ascii_obj =>
     val old_move_delta = move_delta
     move_delta = (0,0)
     new CondExecute(old_move_delta, dType)
-
   }
-
-
 
   override def THEN(dir: Direction): OBJ = {
     if (return_early) {
