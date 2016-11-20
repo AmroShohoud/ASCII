@@ -90,6 +90,22 @@ object ASCII extends OBJ { ascii_obj =>
     }
   }
 
+  def RECT(size: (Int, Int)) = {
+    val (width, height) = size
+    for (x <- 1 to width) {
+      ascii_obj MOVE RIGHT
+    }
+    for (y <- 1 to height) {
+      ascii_obj MOVE DOWN
+    }
+    for (x <- 1 to width) {
+      ascii_obj MOVE LEFT
+    }
+    for (y <- 1 to height) {
+      ascii_obj MOVE UP
+    }
+  }
+
 
   class CondExecute(delta: (Int, Int), dType: DoType) extends OBJ {
     // all functions must be types of conditionals
