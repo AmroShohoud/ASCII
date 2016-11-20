@@ -1,5 +1,6 @@
 // for disabling compiler warnings about postfixes
 import scala.language.postfixOps
+import scala.collection.mutable.Set
 
 import scala.io.Source
 
@@ -104,6 +105,29 @@ object ASCII extends OBJ { ascii_obj =>
     for (y <- 1 to height) {
       ascii_obj MOVE UP
     }
+  }
+
+  def FILL(replace_with: Char) = {
+    var visited = Set[(Int, Int)]()
+    val (starty, startx) = cursor
+    var replace_char = grid(starty)(startx)
+    def fill_recurse(y: Int, x: Int): Unit = {
+      if (!in_bounds((y, x)) || visited.contains((y, x))) {
+        return
+      }
+
+      visited += ((y, x))
+      if (grid(y)(x) != replace_char) {
+        return
+      }
+      grid(y)(x) = replace_with
+
+      for (delta <- List((1, 0), (0, 1), (-1, 0), (0, -1))) {
+        val (yd, xd) = delta
+        fill_recurse(y + yd, x + xd)
+      }
+    }
+    fill_recurse(starty, startx)
   }
 
 
