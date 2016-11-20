@@ -166,6 +166,16 @@ object ASCII extends OBJ { ascii_obj =>
     }
   }
 
+  def JUMP(new_pos: (Int, Int)) = {
+    if (!in_bounds(new_pos)) {
+      println("Jumped out of bounds.")
+      return_early = true
+    } else {
+      cursor = new_pos
+    }
+    this
+  }
+
   def MOVE(dir: Direction) = {
     val old_cursor = cursor
     move_path = move_path :+ dir
@@ -188,7 +198,7 @@ object ASCII extends OBJ { ascii_obj =>
       }
     }
 
-    if (cursor._1 < 0 || cursor._2 < 0 || cursor._1 >= height || cursor._2 >= width) {
+    if (!in_bounds(cursor)) {
       println("Moved out of bounds.")
       cursor = old_cursor
       return_early = true
@@ -200,6 +210,11 @@ object ASCII extends OBJ { ascii_obj =>
       println(cursor)
     }
     this
+  }
+
+  def in_bounds(cursor: (Int, Int)): Boolean = {
+    val (y, x) = cursor
+    return (y >= 0 && x >= 0 && y < height && x < width)
   }
 
 }
