@@ -31,6 +31,8 @@ class OBJ {
   def EXISTS(dir: Direction) = {}
 
   def TIMES() = {}
+
+  def FALSE() = {}
 }
 
 object SWALLOW extends OBJ {}
@@ -101,10 +103,13 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   def MOVE(dir: Direction) = {
-    last_grid = grid
+
+    reset_last_grid
     last_cursor = cursor
     last_character = character
+
     COND_MOVE(dir)
+
     this
   }
 
@@ -160,7 +165,7 @@ object ASCII extends OBJ { ascii_obj =>
 
 
   // conditionals, loops, complicated shit
-  class CondExecute(delta: (Int, Int), dType: DoType) extends OBJ {
+  class CondExecute(dType: DoType) extends OBJ {
     // all functions must be types of conditionals
     override def EXISTS(dir: Direction) = {
       var old_move_path = move_path
@@ -199,44 +204,19 @@ object ASCII extends OBJ { ascii_obj =>
       }
       move_path = Array()
     }
-
-    def FALSE() = {
-      cursor = (cursor._1 - delta._1, cursor._2 - delta._2)
-    }
   }
 
   override def DO(dType: DoType) = {
-    val old_delta = move_delta
-    move_delta = (0,0)
-    for (column <- last_grid) {
-      for (element <- column) {
-        print(element)
-      }
-      print("\n")
-    }
-    print("\n")
-    print("\n")
-    print("\n")
-
-    grid = last_grid
+    // reset for conditional
+    reset_grid
     cursor = last_cursor
     character = last_character
-
-
-    for (column <- grid) {
-      for (element <- column) {
-        print(element)
-      }
-      print("\n")
-    }
-    new CondExecute(old_delta, dType)
+    new CondExecute(dType)
   }
 
   override def DO(times: Int) = {
-    // reset cursor for conditional
-    // cursor = (cursor._1 - move_delta._1, cursor._2 - move_delta._2)
-    // move_delta = (0,0)
-    grid = last_grid
+    // reset for conditional
+    reset_grid
     cursor = last_cursor
     character = last_character
     var old_move_path = move_path
@@ -253,7 +233,7 @@ object ASCII extends OBJ { ascii_obj =>
     if (return_early) {
       return SWALLOW
     } else {
-      MOVE(dir)
+      COND_MOVE(dir)
       return this
     }
   }
@@ -299,6 +279,22 @@ object ASCII extends OBJ { ascii_obj =>
   def in_bounds(cursor: (Int, Int)): Boolean = {
     val (y, x) = cursor
     return (y >= 0 && x >= 0 && y < height && x < width)
+  }
+
+  def reset_grid = {
+    for (y <- 0 to height - 1) {
+      for (x <- 0 to width - 1) {
+        grid(y)(x) = last_grid(y)(x)
+      }
+    }
+  }
+
+  def reset_last_grid = {
+    for (y <- 0 to height - 1) {
+      for (x <- 0 to width - 1) {
+        last_grid(y)(x) = grid(y)(x)
+      }
+    }
   }
 
 }
