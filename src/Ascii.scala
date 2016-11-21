@@ -68,7 +68,6 @@ object ASCII extends OBJ { ascii_obj =>
 
   var move_delta = (0, 0)
 
-
   // commands
   def WIDTH(w: Int) = {
     if (w <= 0) {
@@ -149,6 +148,61 @@ object ASCII extends OBJ { ascii_obj =>
     for (y <- 1 to height) {
       ascii_obj COND_MOVE UP
     }
+  }
+
+  //  ASCII SELECT_RECT (10, 10) MOVE DOWN 
+  //  ASCII SELECT_RECT (10, 10) FILL
+  //  ASCII SELECT_REGION MOVE RIGHT THEN UP
+  //  Making SELECT_REGION not do rectangles would be pretty hard.
+  //  if in selection
+
+  class RectSelection(width: Int, height: Int) {
+    def MOVE(dir: Direction): Unit = {
+      val (cx, cy) = cursor
+
+      dir match {
+        case UP => {
+          cursor = (cursor._1 - 1, cursor._2)
+          // move_delta = (move_delta._1 - 1, move_delta._2)
+        }
+        case DOWN => {
+          cursor = (cursor._1 + 1, cursor._2)
+          // move_delta = (move_delta._1 + 1, move_delta._2)
+        }
+        case LEFT  =>{
+          cursor = (cursor._1, cursor._2 - 1)
+          // move_delta = (move_delta._1, move_delta._2 - 1)
+        }
+        case RIGHT => {
+          for (yd <- -1 to height - 1) {
+            var last_char = '0'
+            for (xd <- -1 to width - 1) {
+              val currx = cx + xd
+              val curry = cy + yd
+              println((currx, curry, last_char))
+              if (in_bounds((curry, currx + 1))) {
+                last_char = grid(curry)(currx + 1)
+                grid(curry)(currx + 1) = last_char
+              } else {
+                println("Moving selection out of bounds")
+                //  could undo here
+                return
+              }
+            }
+          }
+          //  clear left column
+          /*for (yd <- 1 to height) {
+            grid(cy + yd)(cx) = '0'
+          }*/
+          // move_delta = (move_delta._1, move_delta._2 + 1)
+        }
+      }
+    }
+  }
+
+  def SELECT_RECT(size: (Int, Int)): RectSelection = {
+    val (w, h) = size
+    return new RectSelection(w, h)
   }
 
   def FILL(replace_with: Char) = {
@@ -277,8 +331,6 @@ object ASCII extends OBJ { ascii_obj =>
     }
   }
 
-
-
   def COND_MOVE(dir: Direction) = {
     val old_cursor = cursor
     move_path = move_path :+ dir
@@ -335,5 +387,4 @@ object ASCII extends OBJ { ascii_obj =>
       }
     }
   }
-
 }
