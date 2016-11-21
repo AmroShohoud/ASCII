@@ -28,7 +28,19 @@ class OBJ {
     this
   }
 
-  def EXISTS(dir: Direction) = {}
+   def EXISTS(dir: Direction): OBJ = {
+    this
+  }
+
+  def AND(dir: Direction): OBJ = {
+    this
+  }
+
+  def OR(dir:Direction): OBJ = {
+    this
+  }
+
+  def END() = {}
 
   def TIMES() = {}
 
@@ -162,14 +174,29 @@ object ASCII extends OBJ { ascii_obj =>
     fill_recurse(starty, startx)
   }
 
-
-
-  // conditionals, loops, complicated shit
-  class CondExecute(dType: DoType) extends OBJ {
+    class CondExecute(dType: DoType) extends OBJ { cond_execute_obj =>
+    var cond_array: Array[(String, Direction)] = new Array[(String, Direction)](0) 
     // all functions must be types of conditionals
-    override def EXISTS(dir: Direction) = {
+    override def EXISTS(dir: Direction): CondExecute = {
+      cond_array = cond_array :+ ("", dir)
+      cond_execute_obj
+    }
+   
+   //TODO handle other dTypes not just 'EXISTS'
+    override def AND(dir: Direction): CondExecute = {
+      cond_array = cond_array :+ ("and", dir)
+      cond_execute_obj
+    }
+
+    override def OR(dir: Direction): CondExecute = {
+      cond_array = cond_array :+ ("or", dir)
+      cond_execute_obj
+    }
+
+    override def END() = {
+      println("in the end")
       var old_move_path = move_path
-      def does_exist(): Boolean = {
+      def does_exist(dir: Direction): Boolean = {
         println(cursor._1)
         dir match {
           case UP => {
@@ -187,22 +214,34 @@ object ASCII extends OBJ { ascii_obj =>
         }
       }
 
+      def cond_success() : Boolean = {
+        //TODO figure out how to handle logic of OR
+        var success = true
+        for (cond_dir <- cond_array) {
+          if (!does_exist(cond_dir._2)) {
+            success = false
+          }
+        }
+        success
+      }
+
       if (dType == WHILE){
-        while (does_exist()) {
+        while (cond_success()) {
+          println(old_move_path.length)
           for(step <- old_move_path){
             ascii_obj COND_MOVE step
           }
         }
       } else if (dType == IF) {
-        if (does_exist()) {
-          for(step <- old_move_path){
-            ascii_obj COND_MOVE step
-          }
+        if (cond_success()) {
+         for(step <- old_move_path){
+           ascii_obj COND_MOVE step
+         }
         }
       } else {
         println("Not a valid DO command.")
       }
-      move_path = Array()
+    move_path = Array()
     }
   }
 
