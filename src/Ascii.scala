@@ -57,10 +57,10 @@ object ASCII extends OBJ { ascii_obj =>
   var width = 25
   var height = 15
 
-  var grid = Array.fill[Char](height, width) { '0' }
+  var grid = Array.fill[(Char, String)](height, width) { ('0', "Black") }
   var cursor = (0,0)
   var character = '@'
-  var last_grid = Array.fill[Char](height, width) { '0' }
+  var last_grid = Array.fill[(Char, String)](height, width) { ('0', "Black") }
   var last_cursor = (0,0)
   var last_character = '@'
 
@@ -68,13 +68,20 @@ object ASCII extends OBJ { ascii_obj =>
 
   var move_delta = (0, 0)
 
+  val color_map = Map("Blue" -> Console.BLUE, "Red" -> Console.RED, "Black" -> Console.BLACK)
+  var curr_color = "Black"
+
+  def clear_grid() = {
+    grid = Array.fill[(Char, String)](height, width) { ('0', "Black") }
+  }
+
   // commands
   def WIDTH(w: Int) = {
     if (w <= 0) {
       println("Sorry, width must be greater than 0.")
     } else {
       width = w
-      grid = Array.fill[Char](height, width) { '0' }
+      clear_grid()
     }
   }
 
@@ -83,15 +90,15 @@ object ASCII extends OBJ { ascii_obj =>
       println("Sorry, height must be greater than 0.")
     } else {
       height = h
-      grid = Array.fill[Char](height, width) { '0' }
+      clear_grid()
     }
 
   }
 
   def RENDER() = {
     for (column <- grid) {
-      for (element <- column) {
-        print(element)
+      for ((char, color) <- column) {
+        print(color_map(color) + char)
       }
       print("\n")
     }
@@ -99,6 +106,14 @@ object ASCII extends OBJ { ascii_obj =>
 
   def SET() = {
     isDrawing = true
+  }
+
+  def CHANGE_COLOR(col: String) = {
+    if (color_map.contains(col)) {
+      curr_color = col
+    } else {
+      println("Not a valid color.")
+    }
   }
 
   def UNSET() = {
@@ -111,6 +126,20 @@ object ASCII extends OBJ { ascii_obj =>
     } else {
       println("Available characters are '@', '|', '+', '-', '0'.")
     }
+  }
+
+  def TEST_SELECT() = {
+   JUMP (5, 5)
+   RECT (5, 5)
+   SELECT_RECT (5, 5) MOVE RIGHT
+   RENDER
+   print('\n')
+   MARKER('+')
+   JUMP (5, 6)
+   SELECT_RECT (5, 5) MOVE RIGHT
+   //JUMP (5, 7)
+   //SELECT_RECT (5, 5) MOVE RIGHT
+   RENDER
   }
 
   def MOVE(dir: Direction) = {
@@ -158,7 +187,21 @@ object ASCII extends OBJ { ascii_obj =>
 
   class RectSelection(width: Int, height: Int) {
     def MOVE(dir: Direction): Unit = {
+      var last_char = ('0', "Black")
       val (cx, cy) = cursor
+
+      def shift_char(currx: Int, curry: Int, dx: Int, dy: Int): Boolean = {
+        if (in_bounds((curry + dy, currx + dx))) {
+          val curr_char = grid(curry + dy)(currx + dx)
+          grid(curry + dy)(currx + dx) = last_char
+          last_char = curr_char
+          return true
+        } else {
+          println("Moving selection out of bounds")
+          //  could undo here
+          return false
+        }
+      }
 
       dir match {
         case UP => {
@@ -166,35 +209,42 @@ object ASCII extends OBJ { ascii_obj =>
           // move_delta = (move_delta._1 - 1, move_delta._2)
         }
         case DOWN => {
-          cursor = (cursor._1 + 1, cursor._2)
-          // move_delta = (move_delta._1 + 1, move_delta._2)
-        }
-        case LEFT  =>{
-          cursor = (cursor._1, cursor._2 - 1)
-          // move_delta = (move_delta._1, move_delta._2 - 1)
-        }
-        case RIGHT => {
-          for (yd <- -1 to height - 1) {
-            var last_char = '0'
-            for (xd <- -1 to width - 1) {
+          for (xd <- 0 to width) {
+            for (yd <- -1 to height) {
               val currx = cx + xd
               val curry = cy + yd
-              println((currx, curry, last_char))
-              if (in_bounds((curry, currx + 1))) {
-                last_char = grid(curry)(currx + 1)
-                grid(curry)(currx + 1) = last_char
-              } else {
-                println("Moving selection out of bounds")
-                //  could undo here
+
+              //  If shift_char is false, we've moved out of bounds
+              if (!shift_char(currx, curry, 0, 1)){
                 return
               }
             }
           }
-          //  clear left column
-          /*for (yd <- 1 to height) {
-            grid(cy + yd)(cx) = '0'
-          }*/
-          // move_delta = (move_delta._1, move_delta._2 + 1)
+        }
+        case LEFT => {
+          for (yd <- 0 to height) {
+            for (xd <- 0 to width + 1) {
+              val currx = cx + (width + 1 - xd)
+              val curry = cy + yd
+
+              //  If shift_char is false, we've moved out of bounds
+              if (!shift_char(currx, curry, -1, 0)){
+                return
+              }
+            }
+          }
+        }
+        case RIGHT => {
+          for (yd <- 0 to height) {
+            for (xd <- -1 to width) {
+              val currx = cx + xd
+              val curry = cy + yd
+
+              if (!shift_char(currx, curry, 1, 0)){
+                return
+              }
+            }
+          }
         }
       }
     }
@@ -218,7 +268,7 @@ object ASCII extends OBJ { ascii_obj =>
       if (grid(y)(x) != replace_char) {
         return
       }
-      grid(y)(x) = replace_with
+      grid(y)(x) = (replace_with, curr_color)
 
       for (delta <- List((1, 0), (0, 1), (-1, 0), (0, -1))) {
         val (yd, xd) = delta
@@ -359,7 +409,7 @@ object ASCII extends OBJ { ascii_obj =>
       return_early = true
     } else {
       if (isDrawing) {
-        grid(old_cursor._1)(old_cursor._2) = character
+        grid(old_cursor._1)(old_cursor._2) = (character, curr_color)
       }
       return_early = false
       println(cursor)
