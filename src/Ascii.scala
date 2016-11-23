@@ -3,6 +3,7 @@ import scala.language.postfixOps
 import scala.collection.mutable.Set
 
 import scala.io.Source
+//import Console.{GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE}
 
 abstract sealed class Direction(magnitude: Int = 1) {}
 object LEFT extends Direction
@@ -13,6 +14,14 @@ object DOWN extends Direction
 abstract sealed class DoType{}
 object WHILE extends DoType
 object IF extends DoType
+
+val BLUE = Console.BLUE
+val GREEN = Console.GREEN
+val RED = Console.RED
+val BLACK = Console.BLACK
+val CYAN = Console.CYAN
+val WHITE = Console.WHITE
+val RESET = Console.RESET
 
 class OBJ {
 
@@ -57,10 +66,10 @@ object ASCII extends OBJ { ascii_obj =>
   var width = 25
   var height = 15
 
-  var grid = Array.fill[(Char, String)](height, width) { ('0', "Black") }
+  var grid = Array.fill[(Char, String)](height, width) { ('0', BLACK) }
   var cursor = (0,0)
   var character = '@'
-  var last_grid = Array.fill[(Char, String)](height, width) { ('0', "Black") }
+  var last_grid = Array.fill[(Char, String)](height, width) { ('0', BLACK) }
   var last_cursor = (0,0)
   var last_character = '@'
 
@@ -68,11 +77,11 @@ object ASCII extends OBJ { ascii_obj =>
 
   var move_delta = (0, 0)
 
-  val color_map = Map("Blue" -> Console.BLUE, "Red" -> Console.RED, "Black" -> Console.BLACK)
-  var curr_color = "Black"
+  val valid_colors = Set(GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE, BLUE)
+  var curr_color = BLACK
 
   def clear_grid() = {
-    grid = Array.fill[(Char, String)](height, width) { ('0', "Black") }
+    grid = Array.fill[(Char, String)](height, width) { ('0', BLACK) }
   }
 
   // commands
@@ -98,7 +107,8 @@ object ASCII extends OBJ { ascii_obj =>
   def RENDER() = {
     for (column <- grid) {
       for ((char, color) <- column) {
-        print(color_map(color) + char)
+        print(color)
+        print(color + char)
       }
       print("\n")
     }
@@ -109,7 +119,7 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   def CHANGE_COLOR(col: String) = {
-    if (color_map.contains(col)) {
+    if (valid_colors(col)) {
       curr_color = col
     } else {
       println("Not a valid color.")
