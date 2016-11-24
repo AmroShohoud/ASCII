@@ -77,10 +77,16 @@ object ASCII extends OBJ { ascii_obj =>
 
   var move_delta = (0, 0)
 
-  val valid_colors = Set(GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE, BLUE)
+  // val valid_colors = Set(GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE, BLUE)
+  val valid_colors = Set(GREEN, RED, BLACK, CYAN, WHITE, BLUE)
   var curr_color = BLACK
 
-  def clear_grid() = {
+  def RESET() = {
+    CLEAR()
+    RESET_CURSOR()
+  }
+
+  def CLEAR() = {
     grid = Array.fill[(Char, String)](height, width) { ('0', BLACK) }
   }
 
@@ -90,7 +96,7 @@ object ASCII extends OBJ { ascii_obj =>
       println("Sorry, width must be greater than 0.")
     } else {
       width = w
-      clear_grid()
+      CLEAR()
     }
   }
 
@@ -99,17 +105,25 @@ object ASCII extends OBJ { ascii_obj =>
       println("Sorry, height must be greater than 0.")
     } else {
       height = h
-      clear_grid()
+      CLEAR()
     }
 
   }
 
   def RENDER() = {
+    var current = (0,0)
     for (column <- grid) {
       for ((char, color) <- column) {
-        print(color)
-        print(color + char)
+        if (current == cursor) {
+          print('*');
+        }
+        else {
+          print(color)
+          print(color + char)
+        }
+        current = (current._1, current._2 + 1)
       }
+      current = (current._1 + 1, 0)
       print("\n")
     }
   }
@@ -163,10 +177,14 @@ object ASCII extends OBJ { ascii_obj =>
     this
   }
 
+  def RESET_CURSOR() {
+    JUMP(0, 0)
+  }
+
   def JUMP(new_pos: (Int, Int)) = {
     if (!in_bounds(new_pos)) {
       println("Jumped out of bounds.")
-      return_early = true
+
     } else {
       cursor = new_pos
     }
@@ -288,7 +306,7 @@ object ASCII extends OBJ { ascii_obj =>
     fill_recurse(starty, startx)
   }
 
-    class CondExecute(dType: DoType) extends OBJ { cond_execute_obj =>
+  class CondExecute(dType: DoType) extends OBJ { cond_execute_obj =>
     var cond_array: Array[(String, Direction)] = new Array[(String, Direction)](0) 
     // all functions must be types of conditionals
     override def EXISTS(dir: Direction): CondExecute = {
@@ -328,12 +346,17 @@ object ASCII extends OBJ { ascii_obj =>
         }
       }
 
-      def cond_success() : Boolean = {
-        //TODO figure out how to handle logic of OR
+      def cond_success() : Boolean = {   
         var success = true
         for (cond_dir <- cond_array) {
-          if (!does_exist(cond_dir._2)) {
-            success = false
+          if (cond_dir._1 == "and") {
+            success = success && does_exist(cond_dir._2)
+          }
+          else if (cond_dir._1 == "or") {
+            success = success || does_exist(cond_dir._2)
+          }
+          else {
+            success = does_exist(cond_dir._2)
           }
         }
         success
