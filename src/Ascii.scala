@@ -5,11 +5,16 @@ import scala.collection.mutable.Set
 import scala.io.Source
 //import Console.{GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE}
 
-abstract sealed class Direction(magnitude: Int = 1) {}
+abstract sealed class Direction() {}
 object LEFT extends Direction
 object RIGHT extends Direction
 object UP extends Direction
 object DOWN extends Direction
+
+abstract sealed class Rotation {}
+object NINETY extends Rotation
+object HUNDRED_EIGHTY extends Rotation
+object TWO_HUNDRED_SEVENTY extends Rotation
 
 abstract sealed class DoType{}
 object WHILE extends DoType
@@ -191,6 +196,64 @@ object ASCII extends OBJ { ascii_obj =>
     this
   }
 
+  def ROTATE(r: Rotation) {
+    var grid_copy = Array.fill[(Char)](height, width) { ('0') }
+    val max_height = height - 1
+    val max_width = width - 1
+    for (y <- 0 to max_height) {
+      for (x <- 0 to max_width) {
+        grid_copy(y)(x) = grid(y)(x)
+      }
+    }
+
+    r match {
+      case NINETY => {
+        val old_width = width
+        width = height
+        height = old_width
+        grid = Array.fill[(Char)](height, width) { ('0') }
+        var column = 0
+        for (column_ <- grid_copy) {
+          var row = 0
+          for (element <- column_) {
+            grid(row)(max_height - column) = element
+            row = row + 1
+          }
+          column = column + 1
+        }
+      }
+      case HUNDRED_EIGHTY => {
+        grid = Array.fill[(Char)](height, width) { ('0') }
+        var column = 0
+        for (column_ <- grid_copy) {
+          var row = 0
+          for (element <- column_) {
+            grid(max_height - column)(max_width - row) = element
+            row = row + 1
+          }
+          column = column + 1
+
+        }
+      }
+      case TWO_HUNDRED_SEVENTY => {
+        val old_width = width
+        width = height
+        height = old_width
+        grid = Array.fill[(Char)](height, width) { ('0') }
+        var column = 0
+        for (column_ <- grid_copy) {
+          var row = 0
+          for (element <- column_) {
+            grid(max_width - row)(column) = element
+            row = row + 1
+          }
+          column = column + 1
+
+        }
+      }
+    }
+  }
+
   def RECT(size: (Int, Int)) = {
     val (width, height) = size
     for (x <- 1 to width) {
@@ -207,7 +270,7 @@ object ASCII extends OBJ { ascii_obj =>
     }
   }
 
-  //  ASCII SELECT_RECT (10, 10) MOVE DOWN 
+  //  ASCII SELECT_RECT (10, 10) MOVE DOWN
   //  ASCII SELECT_RECT (10, 10) FILL
   //  ASCII SELECT_REGION MOVE RIGHT THEN UP
   //  Making SELECT_REGION not do rectangles would be pretty hard.
@@ -307,13 +370,13 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   class CondExecute(dType: DoType) extends OBJ { cond_execute_obj =>
-    var cond_array: Array[(String, Direction)] = new Array[(String, Direction)](0) 
+    var cond_array: Array[(String, Direction)] = new Array[(String, Direction)](0)
     // all functions must be types of conditionals
     override def EXISTS(dir: Direction): CondExecute = {
       cond_array = cond_array :+ ("", dir)
       cond_execute_obj
     }
-   
+
    //TODO handle other dTypes not just 'EXISTS'
     override def AND(dir: Direction): CondExecute = {
       cond_array = cond_array :+ ("and", dir)
@@ -346,7 +409,7 @@ object ASCII extends OBJ { ascii_obj =>
         }
       }
 
-      def cond_success() : Boolean = {   
+      def cond_success() : Boolean = {
         var success = true
         for (cond_dir <- cond_array) {
           if (cond_dir._1 == "and") {
