@@ -163,11 +163,7 @@ object ASCII extends OBJ { ascii_obj =>
    SELECT_RECT (5, 5) MOVE RIGHT
    RENDER
    print('\n')
-   MARKER('+')
-   JUMP (5, 6)
    SELECT_RECT (5, 5) MOVE RIGHT
-   //JUMP (5, 7)
-   //SELECT_RECT (5, 5) MOVE RIGHT
    RENDER
   }
 
@@ -278,7 +274,7 @@ object ASCII extends OBJ { ascii_obj =>
 
   class RectSelection(width: Int, height: Int) {
     def MOVE(dir: Direction): Unit = {
-      var last_char = ('0', "Black")
+      var last_char = ('0', DEFAULT)
       val (cx, cy) = cursor
 
       def shift_char(currx: Int, curry: Int, dx: Int, dy: Int): Boolean = {
@@ -296,8 +292,18 @@ object ASCII extends OBJ { ascii_obj =>
 
       dir match {
         case UP => {
-          cursor = (cursor._1 - 1, cursor._2)
-          // move_delta = (move_delta._1 - 1, move_delta._2)
+          for (xd <- 0 to width) {
+            for (yd <- 0 to height + 1) {
+              val currx = cx + xd
+              val curry = cy + (height + 1 - yd)
+
+              //  If shift_char is false, we've moved out of bounds
+              if (!shift_char(currx, curry, 0, -1)){
+                return
+              }
+            }
+          }
+          cursor = (cx + 1, cy)
         }
         case DOWN => {
           for (xd <- 0 to width) {
@@ -311,6 +317,7 @@ object ASCII extends OBJ { ascii_obj =>
               }
             }
           }
+          cursor = (cx + 1, cy)
         }
         case LEFT => {
           for (yd <- 0 to height) {
@@ -324,6 +331,7 @@ object ASCII extends OBJ { ascii_obj =>
               }
             }
           }
+          cursor = (cx, cy - 1)
         }
         case RIGHT => {
           for (yd <- 0 to height) {
@@ -336,7 +344,7 @@ object ASCII extends OBJ { ascii_obj =>
               }
             }
           }
-          cursor = (cx + 1, cy)
+          cursor = (cx, cy + 1)
         }
       }
     }
