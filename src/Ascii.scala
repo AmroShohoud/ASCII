@@ -197,7 +197,7 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   def ROTATE(r: Rotation) {
-    var grid_copy = Array.fill[(Char)](height, width) { ('0') }
+    var grid_copy = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
     val max_height = height - 1
     val max_width = width - 1
     for (y <- 0 to max_height) {
@@ -211,7 +211,7 @@ object ASCII extends OBJ { ascii_obj =>
         val old_width = width
         width = height
         height = old_width
-        grid = Array.fill[(Char)](height, width) { ('0') }
+        grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
         var column = 0
         for (column_ <- grid_copy) {
           var row = 0
@@ -223,7 +223,7 @@ object ASCII extends OBJ { ascii_obj =>
         }
       }
       case HUNDRED_EIGHTY => {
-        grid = Array.fill[(Char)](height, width) { ('0') }
+        grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
         var column = 0
         for (column_ <- grid_copy) {
           var row = 0
@@ -239,7 +239,7 @@ object ASCII extends OBJ { ascii_obj =>
         val old_width = width
         width = height
         height = old_width
-        grid = Array.fill[(Char)](height, width) { ('0') }
+        grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
         var column = 0
         for (column_ <- grid_copy) {
           var row = 0
