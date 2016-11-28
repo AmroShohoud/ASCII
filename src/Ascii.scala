@@ -71,10 +71,10 @@ object ASCII extends OBJ { ascii_obj =>
   var width = 25
   var height = 15
 
-  var grid = Array.fill[(Char, String)](height, width) { ('0', BLACK) }
+  var grid = Array.fill[(Char, String)](height, width) { ('0', RESET) }
   var cursor = (0,0)
   var character = '@'
-  var last_grid = Array.fill[(Char, String)](height, width) { ('0', BLACK) }
+  var last_grid = Array.fill[(Char, String)](height, width) { ('0', REST) }
   var last_cursor = (0,0)
   var last_character = '@'
 
@@ -84,7 +84,7 @@ object ASCII extends OBJ { ascii_obj =>
 
   // val valid_colors = Set(GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE, BLUE)
   val valid_colors = Set(GREEN, RED, BLACK, CYAN, WHITE, BLUE)
-  var curr_color = BLACK
+  var curr_color = RESET
 
   def RESET() = {
     CLEAR()
@@ -92,7 +92,7 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   def CLEAR() = {
-    grid = Array.fill[(Char, String)](height, width) { ('0', BLACK) }
+    grid = Array.fill[(Char, String)](height, width) { ('0', RESET) }
   }
 
   // commands
@@ -336,6 +336,7 @@ object ASCII extends OBJ { ascii_obj =>
               }
             }
           }
+          cursor = (cx + 1, cy)
         }
       }
     }
