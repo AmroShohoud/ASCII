@@ -26,7 +26,7 @@ val RED = Console.RED
 val BLACK = Console.BLACK
 val CYAN = Console.CYAN
 val WHITE = Console.WHITE
-val RESET = Console.RESET
+val DEFAULT = Console.RESET
 
 class OBJ {
 
@@ -71,10 +71,10 @@ object ASCII extends OBJ { ascii_obj =>
   var width = 25
   var height = 15
 
-  var grid = Array.fill[(Char, String)](height, width) { ('0', RESET) }
+  var grid = Array.fill[(Char, String)](height, width) { ('0', DEFAULT) }
   var cursor = (0,0)
   var character = '@'
-  var last_grid = Array.fill[(Char, String)](height, width) { ('0', REST) }
+  var last_grid = Array.fill[(Char, String)](height, width) { ('0', DEFAULT) }
   var last_cursor = (0,0)
   var last_character = '@'
 
@@ -84,7 +84,7 @@ object ASCII extends OBJ { ascii_obj =>
 
   // val valid_colors = Set(GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE, BLUE)
   val valid_colors = Set(GREEN, RED, BLACK, CYAN, WHITE, BLUE)
-  var curr_color = RESET
+  var curr_color = DEFAULT
 
   def RESET() = {
     CLEAR()
@@ -92,7 +92,7 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   def CLEAR() = {
-    grid = Array.fill[(Char, String)](height, width) { ('0', RESET) }
+    grid = Array.fill[(Char, String)](height, width) { ('0', DEFAULT) }
   }
 
   // commands
