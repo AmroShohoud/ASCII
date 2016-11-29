@@ -163,8 +163,20 @@ object ASCII extends OBJ { ascii_obj =>
    RECT (5, 5)
    SELECT_RECT (5, 5) MOVE RIGHT
    RENDER
+
    print('\n')
    SELECT_RECT (5, 5) MOVE RIGHT
+   RENDER
+
+   print('\n')
+   SELECT_RECT (5, 5) MOVE DOWN
+   RENDER
+  }
+
+  def TEST_SELECT2() = {
+   JUMP (5, 5)
+   RECT (5, 5)
+   SELECT_RECT (5, 5) MOVE RIGHT THEN DOWN
    RENDER
   }
 
@@ -267,16 +279,10 @@ object ASCII extends OBJ { ascii_obj =>
     }
   }
 
-  //  ASCII SELECT_RECT (10, 10) MOVE DOWN
-  //  ASCII SELECT_RECT (10, 10) FILL
-  //  ASCII SELECT_REGION MOVE RIGHT THEN UP
-  //  Making SELECT_REGION not do rectangles would be pretty hard.
-  //  if in selection
-
   class RectSelection(width: Int, height: Int) {
-    def MOVE(dir: Direction): Unit = {
+    def MOVE(dir: Direction): RectSelection = {
       var last_char = ('0', DEFAULT)
-      val (cx, cy) = cursor
+      val (cy, cx) = cursor
 
       def shift_char(currx: Int, curry: Int, dx: Int, dy: Int): Boolean = {
         if (in_bounds((curry + dy, currx + dx))) {
@@ -300,11 +306,11 @@ object ASCII extends OBJ { ascii_obj =>
 
               //  If shift_char is false, we've moved out of bounds
               if (!shift_char(currx, curry, 0, -1)){
-                return
+                return this
               }
             }
           }
-          cursor = (cx + 1, cy)
+          cursor = (cy - 1, cx)
         }
         case DOWN => {
           for (xd <- 0 to width) {
@@ -314,11 +320,11 @@ object ASCII extends OBJ { ascii_obj =>
 
               //  If shift_char is false, we've moved out of bounds
               if (!shift_char(currx, curry, 0, 1)){
-                return
+                return this
               }
             }
           }
-          cursor = (cx + 1, cy)
+          cursor = (cy + 1, cx)
         }
         case LEFT => {
           for (yd <- 0 to height) {
@@ -328,11 +334,11 @@ object ASCII extends OBJ { ascii_obj =>
 
               //  If shift_char is false, we've moved out of bounds
               if (!shift_char(currx, curry, -1, 0)){
-                return
+                return this
               }
             }
           }
-          cursor = (cx, cy - 1)
+          cursor = (cy, cx - 1)
         }
         case RIGHT => {
           for (yd <- 0 to height) {
@@ -341,13 +347,19 @@ object ASCII extends OBJ { ascii_obj =>
               val curry = cy + yd
 
               if (!shift_char(currx, curry, 1, 0)){
-                return
+                return this
               }
             }
           }
-          cursor = (cx, cy + 1)
+          cursor = (cy, cx + 1)
         }
       }
+      this
+    }
+
+    def THEN(dir: Direction): RectSelection = {
+      MOVE(dir)
+      this
     }
   }
 
@@ -356,10 +368,15 @@ object ASCII extends OBJ { ascii_obj =>
     return new RectSelection(w, h)
   }
 
-  def FILL(replace_with: Char) = {
+  def FILL(replace_with: Any) = {
     var visited = Set[(Int, Int)]()
     val (starty, startx) = cursor
     var replace_char = grid(starty)(startx)
+    var replace_with_tuple: (Char, String) = ('0', DEFAULT)
+    replace_with match {
+      case _: Char => replace_with_tuple = (replace_with.asInstanceOf[Char], curr_color)
+      case _: String => replace_with_tuple = (character, replace_with.asInstanceOf[String])
+    }
     def fill_recurse(y: Int, x: Int): Unit = {
       if (!in_bounds((y, x)) || visited.contains((y, x))) {
         return
@@ -369,7 +386,7 @@ object ASCII extends OBJ { ascii_obj =>
       if (grid(y)(x) != replace_char) {
         return
       }
-      grid(y)(x) = (replace_with, curr_color)
+      grid(y)(x) = replace_with_tuple
 
       for (delta <- List((1, 0), (0, 1), (-1, 0), (0, -1))) {
         val (yd, xd) = delta
