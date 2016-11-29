@@ -102,7 +102,7 @@ object ASCII extends OBJ { ascii_obj =>
       println("Sorry, width must be greater than 0.")
     } else {
       width = w
-      CLEAR()
+      RESET()
     }
   }
 
@@ -111,16 +111,24 @@ object ASCII extends OBJ { ascii_obj =>
       println("Sorry, height must be greater than 0.")
     } else {
       height = h
-      CLEAR()
+      RESET()
     }
 
   }
+
+  // def SMILEY() = {
+  //   ASCII HEIGHT(40)
+  //   ASCII WIDTH(40)
+  //   ASCII MOVE RIGHT DO 10 TIMES
+  //   ASCII RENDER
+  // }
 
   def RENDER() = {
     var current = (0,0)
     for (column <- grid) {
       for ((char, color) <- column) {
         if (current == cursor) {
+          print(DEFAULT)
           print('*');
         }
         else {
@@ -132,6 +140,7 @@ object ASCII extends OBJ { ascii_obj =>
       current = (current._1 + 1, 0)
       print("\n")
     }
+    print(DEFAULT)
   }
 
   def SET() = {
@@ -182,6 +191,7 @@ object ASCII extends OBJ { ascii_obj =>
 
   def MOVE(dir: Direction) = {
 
+    move_path = Array()
     reset_last_grid
     last_cursor = cursor
     last_character = character
@@ -206,6 +216,7 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   def ROTATE(r: Rotation) {
+    RESET_CURSOR
     var grid_copy = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
     val max_height = height - 1
     val max_width = width - 1
@@ -280,6 +291,31 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   class RectSelection(width: Int, height: Int) {
+    def FILL(replace_with: Any) = {
+      var visited = Set[(Int, Int)]()
+      val (starty, startx) = cursor
+      var replace_char = grid(starty)(startx)
+      var replace_with_tuple: (Char, String) = ('0', DEFAULT)
+      replace_with match {
+        case _: Char => replace_with_tuple = (replace_with.asInstanceOf[Char], curr_color)
+        case _: String => replace_with_tuple = (character, replace_with.asInstanceOf[String])
+      }
+      def fill_recurse(y: Int, x: Int): Unit = {
+        if (!(y >= starty && x >= startx && y <= starty + height && x <= startx + width) || visited.contains((y, x))) {
+          return
+        }
+
+        visited += ((y, x))
+        grid(y)(x) = replace_with_tuple
+
+        for (delta <- List((1, 0), (0, 1), (-1, 0), (0, -1))) {
+          val (yd, xd) = delta
+          fill_recurse(y + yd, x + xd)
+        }
+      }
+      fill_recurse(starty, startx)
+    }
+
     def MOVE(dir: Direction): RectSelection = {
       var last_char = ('0', DEFAULT)
       val (cy, cx) = cursor
@@ -358,7 +394,7 @@ object ASCII extends OBJ { ascii_obj =>
     }
 
     def THEN(dir: Direction): RectSelection = {
-      MOVE(dir)
+      COND_MOVE(dir)
       this
     }
   }
@@ -416,10 +452,8 @@ object ASCII extends OBJ { ascii_obj =>
     }
 
     override def END() = {
-      println("in the end")
       var old_move_path = move_path
       def does_exist(dir: Direction): Boolean = {
-        println(cursor._1)
         dir match {
           case UP => {
             return cursor._1 > 0
@@ -454,7 +488,6 @@ object ASCII extends OBJ { ascii_obj =>
 
       if (dType == WHILE){
         while (cond_success()) {
-          println(old_move_path.length)
           for(step <- old_move_path){
             ascii_obj COND_MOVE step
           }
@@ -488,7 +521,7 @@ object ASCII extends OBJ { ascii_obj =>
     var old_move_path = move_path
     for( _ <- 1 to times) {
       for(step <- old_move_path){
-          ascii_obj MOVE step
+          ascii_obj COND_MOVE step
         }
     }
     move_path = Array()
@@ -527,6 +560,7 @@ object ASCII extends OBJ { ascii_obj =>
     }
 
     if (!in_bounds(cursor)) {
+
       println("Moved out of bounds.")
       cursor = old_cursor
       return_early = true
@@ -535,7 +569,6 @@ object ASCII extends OBJ { ascii_obj =>
         grid(old_cursor._1)(old_cursor._2) = (character, curr_color)
       }
       return_early = false
-      println(cursor)
     }
     this
   }
