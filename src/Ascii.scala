@@ -93,6 +93,7 @@ object ASCII extends OBJ { ascii_obj =>
 
   def CLEAR() = {
     grid = Array.fill[(Char, String)](height, width) { ('0', DEFAULT) }
+    last_grid = Array.fill[(Char, String)](height, width) { ('0', DEFAULT) }
   }
 
   // commands
@@ -525,6 +526,11 @@ object ASCII extends OBJ { ascii_obj =>
   def in_bounds(cursor: (Int, Int)): Boolean = {
     val (y, x) = cursor
     return (y >= 0 && x >= 0 && y < height && x < width)
+  }
+
+  def UNDO() {
+    reset_grid
+    cursor = last_cursor
   }
 
   def reset_grid = {
