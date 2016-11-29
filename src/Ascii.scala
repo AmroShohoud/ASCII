@@ -93,6 +93,7 @@ object ASCII extends OBJ { ascii_obj =>
 
   def CLEAR() = {
     grid = Array.fill[(Char, String)](height, width) { ('0', DEFAULT) }
+    last_grid = Array.fill[(Char, String)](height, width) { ('0', DEFAULT) }
   }
 
   // commands
@@ -101,7 +102,7 @@ object ASCII extends OBJ { ascii_obj =>
       println("Sorry, width must be greater than 0.")
     } else {
       width = w
-      CLEAR()
+      RESET()
     }
   }
 
@@ -110,16 +111,24 @@ object ASCII extends OBJ { ascii_obj =>
       println("Sorry, height must be greater than 0.")
     } else {
       height = h
-      CLEAR()
+      RESET()
     }
 
   }
+
+  // def SMILEY() = {
+  //   ASCII HEIGHT(40)
+  //   ASCII WIDTH(40)
+  //   ASCII MOVE RIGHT DO 10 TIMES
+  //   ASCII RENDER
+  // }
 
   def RENDER() = {
     var current = (0,0)
     for (column <- grid) {
       for ((char, color) <- column) {
         if (current == cursor) {
+          print(DEFAULT)
           print('*');
         }
         else {
@@ -131,6 +140,7 @@ object ASCII extends OBJ { ascii_obj =>
       current = (current._1 + 1, 0)
       print("\n")
     }
+    print(DEFAULT)
   }
 
   def SET() = {
@@ -197,6 +207,7 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   def ROTATE(r: Rotation) {
+    RESET_CURSOR
     var grid_copy = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
     val max_height = height - 1
     val max_width = width - 1
@@ -390,10 +401,8 @@ object ASCII extends OBJ { ascii_obj =>
     }
 
     override def END() = {
-      println("in the end")
       var old_move_path = move_path
       def does_exist(dir: Direction): Boolean = {
-        println(cursor._1)
         dir match {
           case UP => {
             return cursor._1 > 0
@@ -428,7 +437,6 @@ object ASCII extends OBJ { ascii_obj =>
 
       if (dType == WHILE){
         while (cond_success()) {
-          println(old_move_path.length)
           for(step <- old_move_path){
             ascii_obj COND_MOVE step
           }
@@ -509,7 +517,6 @@ object ASCII extends OBJ { ascii_obj =>
         grid(old_cursor._1)(old_cursor._2) = (character, curr_color)
       }
       return_early = false
-      println(cursor)
     }
     this
   }
