@@ -20,6 +20,8 @@ abstract sealed class DoType{}
 object WHILE extends DoType
 object IF extends DoType
 
+val MAGENTA = Console.MAGENTA
+val YELLOW = Console.YELLOW
 val BLUE = Console.BLUE
 val GREEN = Console.GREEN
 val RED = Console.RED

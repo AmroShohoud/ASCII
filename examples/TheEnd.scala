@@ -1,3 +1,6 @@
+:load ../src/ASCII.scala
+
+
 ASCII WIDTH 175
 ASCII HEIGHT 30
 ASCII UNSET
