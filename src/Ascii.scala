@@ -1,7 +1,6 @@
 // for disabling compiler warnings about postfixes
 import scala.language.postfixOps
 import scala.collection.mutable.Set
-import java.awt.{TexturePaint, Color, Paint}
 
 import scala.io.Source
 //import Console.{GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE}
@@ -22,7 +21,6 @@ object WHILE extends DoType
 object IF extends DoType
 
 val BLUE = Console.BLUE
-val ORANGE = Color.decode("#ff7f0e")
 val GREEN = Console.GREEN
 val RED = Console.RED
 val BLACK = Console.BLACK
