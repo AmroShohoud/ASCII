@@ -191,6 +191,7 @@ object ASCII extends OBJ { ascii_obj =>
 
   def MOVE(dir: Direction) = {
 
+    move_path = Array()
     reset_last_grid
     last_cursor = cursor
     last_character = character
@@ -368,7 +369,7 @@ object ASCII extends OBJ { ascii_obj =>
     }
 
     def THEN(dir: Direction): RectSelection = {
-      MOVE(dir)
+      COND_MOVE(dir)
       this
     }
   }
@@ -495,7 +496,7 @@ object ASCII extends OBJ { ascii_obj =>
     var old_move_path = move_path
     for( _ <- 1 to times) {
       for(step <- old_move_path){
-          ascii_obj MOVE step
+          ascii_obj COND_MOVE step
         }
     }
     move_path = Array()
@@ -534,6 +535,7 @@ object ASCII extends OBJ { ascii_obj =>
     }
 
     if (!in_bounds(cursor)) {
+
       println("Moved out of bounds.")
       cursor = old_cursor
       return_early = true
