@@ -1,0 +1,64 @@
+abstract sealed class Rotation {}
+object NINETY extends Rotation
+object HUNDRED_EIGHTY extends Rotation
+object TWO_HUNDRED_SEVENTY extends Rotation
+
+def ROTATE(r: Rotation) {
+    var grid_copy = Array.fill[(Char)](height, width) { ('0') }
+    val max_height = height - 1
+    val max_width = width - 1
+    for (y <- 0 to max_height) {
+      for (x <- 0 to max_width) {
+        grid_copy(y)(x) = grid(y)(x)
+      }
+    }
+
+
+
+    r match {
+      case NINETY => {
+        val old_width = width
+        width = height
+        height = old_width
+        grid = Array.fill[(Char)](height, width) { ('0') }
+        var column = 0
+        for (column_ <- grid_copy) {
+          var row = 0
+          for (element <- column_) {
+            grid(row)(max_height - column) = element
+            row = row + 1
+          }
+          column = column + 1
+        }
+      }
+      case HUNDRED_EIGHTY => {
+        grid = Array.fill[(Char)](height, width) { ('0') }
+        var column = 0
+        for (column_ <- grid_copy) {
+          var row = 0
+          for (element <- column_) {
+            grid(max_height - column)(max_width - row) = element
+            row = row + 1
+          }
+          column = column + 1
+
+        }
+      }
+      case TWO_HUNDRED_SEVENTY => {
+        val old_width = width
+        width = height
+        height = old_width
+        grid = Array.fill[(Char)](height, width) { ('0') }
+        var column = 0
+        for (column_ <- grid_copy) {
+          var row = 0
+          for (element <- column_) {
+            grid(max_width - row)(column) = element
+            row = row + 1
+          }
+          column = column + 1
+
+        }
+      }
+    }
+  }
