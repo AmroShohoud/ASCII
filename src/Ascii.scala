@@ -118,13 +118,6 @@ object ASCII extends OBJ { ascii_obj =>
 
   }
 
-  // def SMILEY() = {
-  //   ASCII HEIGHT(40)
-  //   ASCII WIDTH(40)
-  //   ASCII MOVE RIGHT DO 10 TIMES
-  //   ASCII RENDER
-  // }
-
   def RENDER() = {
     var current = (0,0)
     for (column <- grid) {
@@ -169,28 +162,6 @@ object ASCII extends OBJ { ascii_obj =>
     }
   }
 
-  def TEST_SELECT() = {
-   JUMP (5, 5)
-   RECT (5, 5)
-   SELECT_RECT (5, 5) MOVE RIGHT
-   RENDER
-
-   print('\n')
-   SELECT_RECT (5, 5) MOVE RIGHT
-   RENDER
-
-   print('\n')
-   SELECT_RECT (5, 5) MOVE DOWN
-   RENDER
-  }
-
-  def TEST_SELECT2() = {
-   JUMP (5, 5)
-   RECT (5, 5)
-   SELECT_RECT (5, 5) MOVE RIGHT THEN DOWN
-   RENDER
-  }
-
   def MOVE(dir: Direction) = {
 
     move_path = Array()
@@ -198,10 +169,16 @@ object ASCII extends OBJ { ascii_obj =>
     last_cursor = cursor
     last_character = character
 
-    COND_MOVE(dir)
+    cond_move(dir)
 
     this
   }
+
+  def UNDO() {
+    reset_grid
+    cursor = last_cursor
+  }
+
 
   def RESET_CURSOR() {
     JUMP(0, 0)
@@ -279,16 +256,16 @@ object ASCII extends OBJ { ascii_obj =>
   def RECT(size: (Int, Int)) = {
     val (width, height) = size
     for (x <- 1 to width) {
-      ascii_obj COND_MOVE RIGHT
+      ascii_obj cond_move RIGHT
     }
     for (y <- 1 to height) {
-      ascii_obj COND_MOVE DOWN
+      ascii_obj cond_move DOWN
     }
     for (x <- 1 to width) {
-      ascii_obj COND_MOVE LEFT
+      ascii_obj cond_move LEFT
     }
     for (y <- 1 to height) {
-      ascii_obj COND_MOVE UP
+      ascii_obj cond_move UP
     }
   }
 
@@ -396,7 +373,7 @@ object ASCII extends OBJ { ascii_obj =>
     }
 
     def THEN(dir: Direction): RectSelection = {
-      COND_MOVE(dir)
+      cond_move(dir)
       this
     }
   }
@@ -491,13 +468,13 @@ object ASCII extends OBJ { ascii_obj =>
       if (dType == WHILE){
         while (cond_success()) {
           for(step <- old_move_path){
-            ascii_obj COND_MOVE step
+            ascii_obj cond_move step
           }
         }
       } else if (dType == IF) {
         if (cond_success()) {
          for(step <- old_move_path){
-           ascii_obj COND_MOVE step
+           ascii_obj cond_move step
          }
         }
       } else {
@@ -523,7 +500,7 @@ object ASCII extends OBJ { ascii_obj =>
     var old_move_path = move_path
     for( _ <- 1 to times) {
       for(step <- old_move_path){
-          ascii_obj COND_MOVE step
+          ascii_obj cond_move step
         }
     }
     move_path = Array()
@@ -534,12 +511,12 @@ object ASCII extends OBJ { ascii_obj =>
     if (return_early) {
       return SWALLOW
     } else {
-      COND_MOVE(dir)
+      cond_move(dir)
       return this
     }
   }
 
-  def COND_MOVE(dir: Direction) = {
+  def cond_move(dir: Direction) = {
     val old_cursor = cursor
     move_path = move_path :+ dir
     dir match {
@@ -578,11 +555,6 @@ object ASCII extends OBJ { ascii_obj =>
   def in_bounds(cursor: (Int, Int)): Boolean = {
     val (y, x) = cursor
     return (y >= 0 && x >= 0 && y < height && x < width)
-  }
-
-  def UNDO() {
-    reset_grid
-    cursor = last_cursor
   }
 
   def reset_grid = {
