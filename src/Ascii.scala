@@ -172,6 +172,13 @@ object ASCII extends OBJ { ascii_obj =>
    RENDER
   }
 
+  def TEST_SELECT2() = {
+   JUMP (5, 5)
+   RECT (5, 5)
+   SELECT_RECT (5, 5) MOVE RIGHT THEN DOWN
+   RENDER
+  }
+
   def MOVE(dir: Direction) = {
 
     reset_last_grid
@@ -278,7 +285,7 @@ object ASCII extends OBJ { ascii_obj =>
   //  if in selection
 
   class RectSelection(width: Int, height: Int) {
-    def MOVE(dir: Direction): Unit = {
+    def MOVE(dir: Direction): RectSelection = {
       var last_char = ('0', DEFAULT)
       val (cy, cx) = cursor
 
@@ -304,7 +311,7 @@ object ASCII extends OBJ { ascii_obj =>
 
               //  If shift_char is false, we've moved out of bounds
               if (!shift_char(currx, curry, 0, -1)){
-                return
+                return this
               }
             }
           }
@@ -318,7 +325,7 @@ object ASCII extends OBJ { ascii_obj =>
 
               //  If shift_char is false, we've moved out of bounds
               if (!shift_char(currx, curry, 0, 1)){
-                return
+                return this
               }
             }
           }
@@ -332,7 +339,7 @@ object ASCII extends OBJ { ascii_obj =>
 
               //  If shift_char is false, we've moved out of bounds
               if (!shift_char(currx, curry, -1, 0)){
-                return
+                return this
               }
             }
           }
@@ -345,13 +352,19 @@ object ASCII extends OBJ { ascii_obj =>
               val curry = cy + yd
 
               if (!shift_char(currx, curry, 1, 0)){
-                return
+                return this
               }
             }
           }
           cursor = (cy, cx + 1)
         }
       }
+      this
+    }
+
+    def THEN(dir: Direction): RectSelection = {
+      MOVE(dir)
+      this
     }
   }
 
