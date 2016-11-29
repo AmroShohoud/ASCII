@@ -291,6 +291,31 @@ object ASCII extends OBJ { ascii_obj =>
   }
 
   class RectSelection(width: Int, height: Int) {
+    def FILL(replace_with: Any) = {
+      var visited = Set[(Int, Int)]()
+      val (starty, startx) = cursor
+      var replace_char = grid(starty)(startx)
+      var replace_with_tuple: (Char, String) = ('0', DEFAULT)
+      replace_with match {
+        case _: Char => replace_with_tuple = (replace_with.asInstanceOf[Char], curr_color)
+        case _: String => replace_with_tuple = (character, replace_with.asInstanceOf[String])
+      }
+      def fill_recurse(y: Int, x: Int): Unit = {
+        if (!(y >= starty && x >= startx && y <= starty + height && x <= startx + width) || visited.contains((y, x))) {
+          return
+        }
+
+        visited += ((y, x))
+        grid(y)(x) = replace_with_tuple
+
+        for (delta <- List((1, 0), (0, 1), (-1, 0), (0, -1))) {
+          val (yd, xd) = delta
+          fill_recurse(y + yd, x + xd)
+        }
+      }
+      fill_recurse(starty, startx)
+    }
+
     def MOVE(dir: Direction): RectSelection = {
       var last_char = ('0', DEFAULT)
       val (cy, cx) = cursor
