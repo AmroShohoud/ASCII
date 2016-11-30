@@ -2,12 +2,12 @@ import scala.math
 :load ../src/ASCII.scala
 
 
-ASCII HEIGHT 30
+ASCII HEIGHT 22
 ASCII WIDTH 90
 ASCII CHANGE_COLOR CYAN
 
 val PI = 3.14159265358979323846264338327
-val dataCount = 79.0
+val dataCount = 85.0
 val shift = 10
 var lastY = 0
 for (i <- 0 to dataCount.toInt) {
