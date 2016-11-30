@@ -293,6 +293,7 @@ object ASCII extends OBJ { ascii_obj =>
         }
       }
       fill_recurse(starty, startx)
+      this
     }
 
     def MOVE(dir: Direction): RectSelection = {
@@ -373,7 +374,7 @@ object ASCII extends OBJ { ascii_obj =>
     }
 
     def THEN(dir: Direction): RectSelection = {
-      cond_move(dir)
+      MOVE(dir)
       this
     }
   }
