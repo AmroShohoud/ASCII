@@ -1,7 +1,8 @@
 # ASCII
 
 $ scala
-$ :load src/Ascii.scala
+
+\>:load src/Ascii.scala
 
 ## Commands
 
@@ -76,7 +77,10 @@ ASCII SELECT_RECT (5,5) FILL 'x'
 
 ## Example Artwork
 $ scala
-> :load examples/wave.scala
-> :load examples/pride.scala
-> :load examples/smiley.scala
-> :load examples/TheEnd.scala
+\> :load examples/wave.scala
+
+\> :load examples/pride.scala
+
+\> :load examples/smiley.scala
+
+\> :load examples/TheEnd.scala
