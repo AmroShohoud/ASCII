@@ -77,6 +77,7 @@ ASCII SELECT_RECT (5,5) FILL 'x'
 
 ## Example Artwork
 $ scala
+
 \> :load examples/wave.scala
 
 \> :load examples/pride.scala
