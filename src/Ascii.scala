@@ -3,7 +3,6 @@ import scala.language.postfixOps
 import scala.collection.mutable.Set
 
 import scala.io.Source
-//import Console.{GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE}
 
 abstract sealed class Direction() {}
 object LEFT extends Direction
@@ -84,8 +83,7 @@ object ASCII extends OBJ { ascii_obj =>
 
   var move_delta = (0, 0)
 
-  // val valid_colors = Set(GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE, BLUE)
-  val valid_colors = Set(GREEN, RED, BLACK, CYAN, WHITE, BLUE)
+  val valid_colors = Set(GREEN, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE, BLUE)
   var curr_color = DEFAULT
 
   def RESET() = {
@@ -308,7 +306,6 @@ object ASCII extends OBJ { ascii_obj =>
           return true
         } else {
           println("Moving selection out of bounds")
-          //  could undo here
           return false
         }
       }
@@ -420,7 +417,6 @@ object ASCII extends OBJ { ascii_obj =>
       cond_execute_obj
     }
 
-   //TODO handle other dTypes not just 'EXISTS'
     override def AND(dir: Direction): CondExecute = {
       cond_array = cond_array :+ ("and", dir)
       cond_execute_obj
@@ -523,19 +519,15 @@ object ASCII extends OBJ { ascii_obj =>
     dir match {
       case UP => {
         cursor = (cursor._1 - 1, cursor._2)
-        // move_delta = (move_delta._1 - 1, move_delta._2)
       }
       case DOWN => {
         cursor = (cursor._1 + 1, cursor._2)
-        // move_delta = (move_delta._1 + 1, move_delta._2)
       }
       case LEFT  =>{
         cursor = (cursor._1, cursor._2 - 1)
-        // move_delta = (move_delta._1, move_delta._2 - 1)
       }
       case RIGHT => {
         cursor = (cursor._1, cursor._2 + 1)
-        // move_delta = (move_delta._1, move_delta._2 + 1)
       }
     }
 
