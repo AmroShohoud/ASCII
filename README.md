@@ -28,11 +28,11 @@ ASCII UNSET
 
 **Change_color** - changes the color of the marker
 
-ASCII CHANGE_COLOR <GREEN, BLUE, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE>
+ASCII CHANGE_COLOR \<GREEN, BLUE, RED, YELLOW, MAGENTA, BLACK, CYAN, WHITE\>
 
 **Marker** - changes the characters of the marker
 
-ASCII MARKER <'@', '|', '+', '-', '0'>
+ASCII MARKER \<'@', '|', '+', '-', '0'\>
 
 **Rotate** - rotates the entire grid
 
@@ -64,9 +64,9 @@ ASCII MOVE DOWN THEN RIGHT DO WHILE EXISTS DOWN END
 
 **And/Or** - Allows for compound conditions
 
-ASCII MOVE DOWN THEN RIGHT DO WHILE EXISTS DOWN AND RIGHT END
+ASCII MOVE DOWN THEN RIGHT DO WHILE EXISTS DOWN **AND** RIGHT END
 
-ASCII MOVE DOWN THEN RIGHT DO WHILE EXISTS DOWN OR RIGHT END
+ASCII MOVE DOWN THEN RIGHT DO WHILE EXISTS DOWN **OR** RIGHT END
 
 **Undo** - Undo the previous cursor move
 
