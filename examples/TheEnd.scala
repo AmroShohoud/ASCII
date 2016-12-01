@@ -1,4 +1,4 @@
-:load ../src/Ascii.scala
+:load src/Ascii.scala
 
 
 ASCII WIDTH 175

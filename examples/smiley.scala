@@ -1,4 +1,4 @@
-:load ../src/ASCII.scala
+:load src/ASCII.scala
 
 ASCII HEIGHT 20
 ASCII WIDTH 50

@@ -1,5 +1,5 @@
 import scala.math
-:load ../src/ASCII.scala
+:load src/ASCII.scala
 
 
 ASCII HEIGHT 22
