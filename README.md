@@ -1,4 +1,5 @@
 # ASCII
+An internal DSL that allows the user to create ASCII art with simple commands in scala.
 
 $ scala
 
