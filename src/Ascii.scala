@@ -209,11 +209,13 @@ object ASCII extends OBJ { ascii_obj =>
         width = height
         height = old_width
         grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
+        last_grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
         var column = 0
         for (column_ <- grid_copy) {
           var row = 0
           for (element <- column_) {
             grid(row)(max_height - column) = element
+            last_grid(row)(max_height - column) = element
             row = row + 1
           }
           column = column + 1
@@ -221,11 +223,13 @@ object ASCII extends OBJ { ascii_obj =>
       }
       case HUNDRED_EIGHTY => {
         grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
+        last_grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
         var column = 0
         for (column_ <- grid_copy) {
           var row = 0
           for (element <- column_) {
             grid(max_height - column)(max_width - row) = element
+            last_grid(max_height - column)(max_width - row) = element
             row = row + 1
           }
           column = column + 1
@@ -237,11 +241,13 @@ object ASCII extends OBJ { ascii_obj =>
         width = height
         height = old_width
         grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
+        last_grid = Array.fill[(Char, String)](height, width) { ('0', curr_color) }
         var column = 0
         for (column_ <- grid_copy) {
           var row = 0
           for (element <- column_) {
             grid(max_width - row)(column) = element
+            last_grid(max_width - row)(column) = element
             row = row + 1
           }
           column = column + 1
