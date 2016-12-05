@@ -13,11 +13,11 @@ ASCII RENDER
 
 **Height** - sets the height of the grid (# of characters)
 
-ASCII HEIGHT
+ASCII HEIGHT X
 
 **Width** - sets the width of the grid (# of characters)
 
-ASCII WIDTH
+ASCII WIDTH X
 
 **Set** - Cursor marks the grid when moved
 
@@ -37,7 +37,7 @@ ASCII MARKER \<'@', '|', '+', '-', '0'\>
 
 **Rotate** - rotates the entire grid
 
-ASCII ROTATE <NINETY, HUNDRED_EIGHTY, TWO_HUNDRED_SEVENTY>
+ASCII ROTATE \<NINETY, HUNDRED_EIGHTY, TWO_HUNDRED_SEVENTY\>
 
 **Directions**
 
@@ -45,23 +45,23 @@ LEFT, RIGHT, UP, DOWN
 
 **Move** - moves the cursor in the given direction
 
-ASCII MOVE <Direction>
+ASCII MOVE \<Direction\>
 
 **Then** - allows chaining of MOVEs
 
-ASCII MOVE <Direction< THEN <Direction>
+ASCII MOVE \<Direction\> **THEN** \<Direction\>
 
 **Do** - takes in an integer X and executes the MOVE X times
 
-ASCII MOVE DOWN THEN RIGHT DO 5 TIMES
+ASCII MOVE DOWN THEN RIGHT **DO** 5 TIMES
 
 **Do if** - takes in an IF and executes the statement if it evaluates to true
 
-ASCII MOVE DOWN THEN RIGHT DO IF EXISTS DOWN END
+ASCII MOVE DOWN THEN RIGHT **DO IF** EXISTS DOWN END
 
 **Do while** - takes in a WHILE and executes the statement in a loop
 
-ASCII MOVE DOWN THEN RIGHT DO WHILE EXISTS DOWN END
+ASCII MOVE DOWN THEN RIGHT **DO WHILE** EXISTS DOWN END
 
 **And/Or** - Allows for compound conditions
 
@@ -91,11 +91,11 @@ ASCII RECT (5, 5)
 
 **Fill** - Fills a selected area with a color or character
 
-ASCII FILL (<Color> | <Char>)
+ASCII FILL (\<Color\> | \<Char\>)
 
 **Select_rect** - selects an area
 
-ASCII SELECT_RECT (WIDTH, HEIGHT) <MOVE/FILL>
+ASCII SELECT_RECT (WIDTH, HEIGHT) \<MOVE/FILL\>
 
 ASCII SELECT_RECT (5,5) MOVE RIGHT THEN DOWN
 
